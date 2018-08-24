@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../i18n.dart';
 
 import 'package:fluttery/framing.dart';
 
@@ -16,10 +17,10 @@ class _LoginState extends State<Login> {
         children: <Widget>[
           new Flexible(child: new Container(), flex: 1),
           new TextFormFieldCentered(
-              hintText: 'E-mail', prefixIcon: Icons.person),
+              hintText: I18n.of(context).getValueOf(Strings.FORM_EMAIL), prefixIcon: Icons.person),
           new Padding(padding: const EdgeInsets.only(top: 4.0, bottom: 4.0)),
           new TextFormFieldCentered(
-              hintText: 'Contraseña', prefixIcon: Icons.lock),
+              hintText: I18n.of(context).getValueOf(Strings.FORM_PASSWORD), prefixIcon: Icons.lock),
           new Padding(padding: const EdgeInsets.only(top: 12.0, bottom: 12.0)),
           new Row(
             children: <Widget>[
@@ -29,7 +30,7 @@ class _LoginState extends State<Login> {
               ),
               new Expanded(
                 child: new RaisedButton(
-                    child: new Text('Acceder'), onPressed: () {}),
+                    child: new Text(I18n.of(context).getValueOf(Strings.BTN_LOGIN)), onPressed: () {}),
                 flex: 6,
               ),
               new Flexible(

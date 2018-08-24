@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'i18n.dart';
 
 import 'view/login.dart';
 
@@ -8,6 +10,15 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return new MaterialApp(
+      localizationsDelegates: [
+        I18nDelegate(),
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate
+      ],
+      supportedLocales: [
+        const Locale('en', 'US'),
+        const Locale('es', 'ES'),
+      ],
       title: 'Flutter Demo',
       theme: new ThemeData(
         backgroundColor: Colors.white,
