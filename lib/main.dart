@@ -4,6 +4,8 @@ import 'i18n.dart';
 
 import 'view/login.dart';
 
+import 'view/new-reminder.dart';
+
 void main() => runApp(new MyApp());
 
 class MyApp extends StatelessWidget {
@@ -24,7 +26,8 @@ class MyApp extends StatelessWidget {
         backgroundColor: Colors.white,
         primarySwatch: Colors.blue,
       ),
-      home: new Home(title: 'Flutter Demo Home Page'),
+      //home: new Home(title: 'Flutter Demo Home Page'),
+      home: new Reminder(),
     );
   }
 }
