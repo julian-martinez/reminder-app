@@ -5,6 +5,7 @@ import 'i18n.dart';
 import 'view/login.dart';
 
 import 'view/new-reminder.dart';
+import 'view/reminder-list.dart';
 
 void main() => runApp(new MyApp());
 
@@ -27,7 +28,8 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
       ),
       //home: new Home(title: 'Flutter Demo Home Page'),
-      home: new Reminder(),
+      //home: new Reminder(),
+      home: new ReminderList(),
     );
   }
 }
