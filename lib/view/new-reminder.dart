@@ -38,7 +38,7 @@ class _ReminderState extends State<Reminder> {
             icon: new Icon(Icons.arrow_back), 
             onPressed: (){}
         ),
-        title: new Text('Nuevo recordatorio'),
+        title: new Text(I18n.of(context).getValueOf(Strings.NEW_REMINDER)),
       ),
       body: new Container(
         child: new Column(
@@ -55,7 +55,7 @@ class _ReminderState extends State<Reminder> {
                     maxLines: 255,
                     decoration: new InputDecoration(
                       border: InputBorder.none,
-                      hintText: 'Escribe tu recordatorio',
+                      hintText: I18n.of(context).getValueOf(Strings.WRT_REMINDER),
                     )
                   )
               ),
@@ -121,7 +121,7 @@ class _ReminderState extends State<Reminder> {
             ),
             new Flexible(
               child: new _DateTimePicker(
-                labelText: 'Notificar en',
+                labelText: I18n.of(context).getValueOf(Strings.NOTIFY_AT),
                 selectedDate: _toDate,
                 selectedTime: _toTime,
                 selectDate: (DateTime date){
@@ -158,7 +158,7 @@ class _ReminderState extends State<Reminder> {
                 color: Colors.lightBlueAccent,
                 padding: const EdgeInsets.only(left: 24.0, right: 24.0, top: 12.0, bottom: 12.0),
                 alignment: Alignment.centerLeft,
-                  child: new Text('Localización guardada', style: TextStyle(fontSize: 18.0),)
+                  child: new Text(I18n.of(context).getValueOf(Strings.SAVED_LOCATION), style: TextStyle(fontSize: 18.0),)
               )
           )
         ],

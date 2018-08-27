@@ -17,7 +17,7 @@ class _ReminderListState extends State<ReminderList> {
             icon: new Icon(Icons.arrow_back),
             onPressed: (){}
         ),
-        title: new Text('Recordatorios'),
+        title: new Text(I18n.of(context).getValueOf(Strings.REMINDERS)),
       ),
       body: new ListView.builder(
         itemCount: 15,
@@ -106,7 +106,7 @@ class _ReminderItemState extends State<ReminderItem> {
                 new Container(
                   height: 24.0,
                   padding: const EdgeInsets.only(left: 12.0, top: 2.0, bottom: 4.0),
-                  child: new Text('Reunion en el parc bit para tratar asuntos de diferente índole acerca del desarrollo de software',
+                  child: new Text('Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: new TextStyle(fontSize: 16.0),
@@ -116,7 +116,7 @@ class _ReminderItemState extends State<ReminderItem> {
                   alignment: Alignment.centerRight,
                   height: 24.0,
                   padding: const EdgeInsets.only(left: 12.0, top: 4.0, bottom: 2.0),
-                  child: new Text('Creacion: 03/09/2018 17:37',
+                  child: new Text('03/09/2018 17:37',
                     style: new TextStyle(fontStyle: FontStyle.italic),
                   ),
                 ),

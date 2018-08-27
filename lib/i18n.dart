@@ -17,12 +17,22 @@ class I18n {
     'en': {
       Strings.FORM_EMAIL: 'E-Mail',
       Strings.FORM_PASSWORD: 'Password',
-      Strings.BTN_LOGIN: 'Log in'
+      Strings.BTN_LOGIN: 'Log in',
+      Strings.NEW_REMINDER: 'New reminder',
+      Strings.WRT_REMINDER: 'Write your reminder',
+      Strings.NOTIFY_AT: 'Notify at',
+      Strings.SAVED_LOCATION: 'Saved location',
+      Strings.REMINDERS: 'Reminders'
     },
     'es': {
       Strings.FORM_EMAIL: 'Correo electrónico',
       Strings.FORM_PASSWORD: 'Contraseña',
-      Strings.BTN_LOGIN: 'Acceder'
+      Strings.BTN_LOGIN: 'Acceder',
+      Strings.NEW_REMINDER: 'Nuevo recordatorio',
+      Strings.WRT_REMINDER: 'Escribe tu recordatorio',
+      Strings.NOTIFY_AT: 'Notificar en',
+      Strings.SAVED_LOCATION: 'Localización guardada',
+      Strings.REMINDERS: 'Recordatorios'
     }
   };
 
@@ -35,7 +45,12 @@ class I18n {
 enum Strings {
   FORM_EMAIL,
   FORM_PASSWORD,
-  BTN_LOGIN
+  BTN_LOGIN,
+  NEW_REMINDER,
+  WRT_REMINDER,
+  NOTIFY_AT,
+  SAVED_LOCATION,
+  REMINDERS
 }
 
 class I18nDelegate extends LocalizationsDelegate<I18n> {
