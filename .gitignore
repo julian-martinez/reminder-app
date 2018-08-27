@@ -10,3 +10,4 @@ build/
 .flutter-plugins
 
 *.log
+android/app/google-services.json
