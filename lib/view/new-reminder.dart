@@ -5,6 +5,10 @@ import 'package:intl/intl.dart';
 
 import 'package:fluttery/framing.dart';
 
+import 'package:firebase_database/firebase_database.dart';
+
+final FirebaseDatabase database = FirebaseDatabase.instance;
+
 class Reminder extends StatefulWidget {
   @override
   _ReminderState createState() => _ReminderState();
@@ -17,17 +21,24 @@ class _ReminderState extends State<Reminder> {
 
   double _lat;
   double _lon;
-  DateTime _notificationDate;
-  TimeOfDay _notificationTime;
+  DateTime _ntDate;
+  TimeOfDay _ntTime;
 
-  DateTime _toDate = new DateTime.now();
-  TimeOfDay _toTime = new TimeOfDay(hour: TimeOfDay.now().hour, minute: TimeOfDay.now().minute);
+  final reminderController = new TextEditingController();
 
 
   @override
   void initState() {
     _activeNotification = false;
     _activeLocation = false;
+    _ntDate = new DateTime.now();
+    _ntTime = new TimeOfDay(hour: TimeOfDay.now().hour, minute: TimeOfDay.now().minute);
+  }
+
+  @override
+  void dispose() {
+    reminderController.dispose();
+    super.dispose();
   }
 
   @override
@@ -47,6 +58,7 @@ class _ReminderState extends State<Reminder> {
               child: new Padding(
                   padding: const EdgeInsets.all(24.0),
                   child: new TextFormField(
+                    controller: reminderController,
                     style: new TextStyle(
                       fontSize: 18.0,
                       color: Colors.black
@@ -67,7 +79,24 @@ class _ReminderState extends State<Reminder> {
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
       floatingActionButton: new FloatingActionButton(
-          onPressed: (){},
+          onPressed: (){
+            String trimmedText = reminderController.text.toString().trim();
+            DateTime notification = null;
+            if (_ntDate != null && _ntTime != null){
+              notification = new DateTime(_ntDate.year, _ntDate.month, _ntDate.day, _ntTime.hour, _ntTime.minute);
+            }
+            DateTime creation = DateTime.now();
+
+            database.reference().child('reminder').reference().push().set({
+              //messageID
+              //userID
+              'text': trimmedText, //string - trim
+              //'location.lat': null, //double - nullable
+              //'location.lon': null, //double - nullable
+              //'notification': notification.toString(), //datetime.tostring - nullable
+              //'creation': creation.toString() //datetime.tostring
+            });
+          },
         child: const Icon(Icons.done),
       ),
       bottomNavigationBar: new BottomAppBar(
@@ -122,16 +151,16 @@ class _ReminderState extends State<Reminder> {
             new Flexible(
               child: new _DateTimePicker(
                 labelText: I18n.of(context).getValueOf(Strings.NOTIFY_AT),
-                selectedDate: _toDate,
-                selectedTime: _toTime,
+                selectedDate: _ntDate,
+                selectedTime: _ntTime,
                 selectDate: (DateTime date){
                   setState(() {
-                    _notificationDate = date;
+                    _ntDate = date;
                   });
                 },
                 selectTime: (TimeOfDay time){
                   setState(() {
-                    _notificationTime = time;
+                    _ntTime = time;
                   });
                 },
               ),

@@ -28,8 +28,8 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
       ),
       //home: new Home(title: 'Flutter Demo Home Page'),
-      //home: new Reminder(),
-      home: new ReminderList(),
+      home: new Reminder(),
+      //home: new ReminderList(),
     );
   }
 }
