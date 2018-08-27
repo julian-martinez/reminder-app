@@ -47,7 +47,9 @@ class _ReminderState extends State<Reminder> {
       appBar: new AppBar(
         leading: new IconButton(
             icon: new Icon(Icons.arrow_back), 
-            onPressed: (){}
+            onPressed: (){
+              Navigator.pop(context);
+            }
         ),
         title: new Text(I18n.of(context).getValueOf(Strings.NEW_REMINDER)),
       ),

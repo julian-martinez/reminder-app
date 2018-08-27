@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../i18n.dart';
+import 'new-reminder.dart';
 
 import 'package:fluttery/framing.dart';
 
@@ -15,7 +16,9 @@ class _ReminderListState extends State<ReminderList> {
       appBar: new AppBar(
         leading: new IconButton(
             icon: new Icon(Icons.arrow_back),
-            onPressed: (){}
+            onPressed: (){
+              Navigator.pop(context);
+            }
         ),
         title: new Text(I18n.of(context).getValueOf(Strings.REMINDERS)),
       ),
@@ -32,7 +35,11 @@ class _ReminderListState extends State<ReminderList> {
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       floatingActionButton: new FloatingActionButton(
-        onPressed: (){},
+        onPressed: (){
+          Navigator.push(context, MaterialPageRoute(
+              builder: (context) => Reminder()
+          ));
+        },
         child: const Icon(Icons.add),
       ),
     );

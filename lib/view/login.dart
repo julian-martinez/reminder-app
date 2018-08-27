@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../i18n.dart';
+import 'reminder-list.dart';
 
 import 'package:fluttery/framing.dart';
 
@@ -30,7 +31,13 @@ class _LoginState extends State<Login> {
               ),
               new Expanded(
                 child: new RaisedButton(
-                    child: new Text(I18n.of(context).getValueOf(Strings.BTN_LOGIN)), onPressed: () {}),
+                    child: new Text(I18n.of(context).getValueOf(Strings.BTN_LOGIN)),
+                    onPressed: () {
+                      Navigator.push(context, MaterialPageRoute(
+                          builder: (context) => ReminderList()
+                      ));
+                    }
+                    ),
                 flex: 6,
               ),
               new Flexible(

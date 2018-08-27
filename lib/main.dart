@@ -27,8 +27,8 @@ class MyApp extends StatelessWidget {
         backgroundColor: Colors.white,
         primarySwatch: Colors.blue,
       ),
-      //home: new Home(title: 'Flutter Demo Home Page'),
-      home: new Reminder(),
+      home: new Home(title: 'Flutter Demo Home Page'),
+      //home: new Reminder(),
       //home: new ReminderList(),
     );
   }
