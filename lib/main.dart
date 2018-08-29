@@ -1,18 +1,29 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'i18n.dart';
+import 'dependency_injection.dart';
 
 import 'view/login.dart';
 
-import 'view/new-reminder.dart';
-import 'view/reminder-list.dart';
+import 'view/new_reminder.dart';
+import 'view/reminder_list.dart';
 
-void main() => runApp(new MyApp());
+import 'package:firebase_auth/firebase_auth.dart';
+
+void main() {
+  Injector.configure(Flavor.PROD);
+  runApp(new MyApp());
+}
 
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return new MaterialApp(
+      initialRoute: '/',
+      routes: {
+        '/login': (context) => Login(),
+        //'/reminders': (context) => ReminderList()
+      },
       localizationsDelegates: [
         I18nDelegate(),
         GlobalMaterialLocalizations.delegate,
@@ -44,9 +55,27 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+
+  bool _isLoggedIn;
+  FirebaseUser _user;
+
   @override
   Widget build(BuildContext context) {
-    return Login();
+    return _isLoggedIn ? ReminderList(user: _user,) : Login();
+  }
+
+  @override
+  void initState() {
+    _isLoggedIn = false;
+    Injector().auth.currentUser().then((user) {
+      if (user != null && user.isEmailVerified){
+        setState(() {
+          _isLoggedIn = true;
+          _user = user;
+        });
+      }
+    });
+    super.initState();
   }
 }
 

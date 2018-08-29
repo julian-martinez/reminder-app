@@ -2,12 +2,11 @@ import 'package:flutter/material.dart';
 import '../i18n.dart';
 import 'dart:async';
 import 'package:intl/intl.dart';
+import '../dependency_injection.dart';
 
 import 'package:fluttery/framing.dart';
 
 import 'package:firebase_database/firebase_database.dart';
-
-final FirebaseDatabase database = FirebaseDatabase.instance;
 
 class Reminder extends StatefulWidget {
   @override
@@ -89,7 +88,7 @@ class _ReminderState extends State<Reminder> {
             }
             DateTime creation = DateTime.now();
 
-            database.reference().child('reminder').reference().push().set({
+            new Injector().database.reference().child('reminder').reference().push().set({
               //messageID
               //userID
               'text': trimmedText, //string - trim

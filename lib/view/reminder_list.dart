@@ -1,15 +1,30 @@
 import 'package:flutter/material.dart';
 import '../i18n.dart';
-import 'new-reminder.dart';
+import 'new_reminder.dart';
+import '../dependency_injection.dart';
+
+import 'package:firebase_auth/firebase_auth.dart';
 
 import 'package:fluttery/framing.dart';
 
 class ReminderList extends StatefulWidget {
+  ReminderList({Key key, @required this.user}) : super(key: key);
+
+  final FirebaseUser user;
+
   @override
   _ReminderListState createState() => _ReminderListState();
 }
 
 class _ReminderListState extends State<ReminderList> {
+
+  void _signOut(BuildContext context) async {
+    await Injector().auth.signOut();
+    if (!Navigator.pop(context)){
+      Navigator.of(context).pushNamed('/login');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
@@ -17,7 +32,7 @@ class _ReminderListState extends State<ReminderList> {
         leading: new IconButton(
             icon: new Icon(Icons.arrow_back),
             onPressed: (){
-              Navigator.pop(context);
+              _signOut(context);
             }
         ),
         title: new Text(I18n.of(context).getValueOf(Strings.REMINDERS)),
