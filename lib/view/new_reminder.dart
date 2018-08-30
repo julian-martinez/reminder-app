@@ -4,11 +4,17 @@ import 'dart:async';
 import 'package:intl/intl.dart';
 import '../dependency_injection.dart';
 
+import 'package:firebase_auth/firebase_auth.dart';
+
 import 'package:fluttery/framing.dart';
 
 import 'package:firebase_database/firebase_database.dart';
 
 class Reminder extends StatefulWidget {
+  Reminder({Key key, @required this.user}) : super(key: key);
+
+  final FirebaseUser user;
+
   @override
   _ReminderState createState() => _ReminderState();
 }
@@ -24,7 +30,6 @@ class _ReminderState extends State<Reminder> {
   TimeOfDay _ntTime;
 
   final reminderController = new TextEditingController();
-
 
   @override
   void initState() {
@@ -42,7 +47,11 @@ class _ReminderState extends State<Reminder> {
 
   @override
   Widget build(BuildContext context) {
+    final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+    FirebaseUser _user = widget.user;
+
     return new Scaffold(
+      key: _scaffoldKey,
       appBar: new AppBar(
         leading: new IconButton(
             icon: new Icon(Icons.arrow_back), 
@@ -82,21 +91,22 @@ class _ReminderState extends State<Reminder> {
       floatingActionButton: new FloatingActionButton(
           onPressed: (){
             String trimmedText = reminderController.text.toString().trim();
-            DateTime notification = null;
-            if (_ntDate != null && _ntTime != null){
-              notification = new DateTime(_ntDate.year, _ntDate.month, _ntDate.day, _ntTime.hour, _ntTime.minute);
-            }
+            DateTime notification = new DateTime(_ntDate.year, _ntDate.month, _ntDate.day, _ntTime.hour, _ntTime.minute);
             DateTime creation = DateTime.now();
+            if (notification.isBefore(creation)) notification = null;
 
-            new Injector().database.reference().child('reminder').reference().push().set({
-              //messageID
-              //userID
-              'text': trimmedText, //string - trim
-              //'location.lat': null, //double - nullable
-              //'location.lon': null, //double - nullable
-              //'notification': notification.toString(), //datetime.tostring - nullable
-              //'creation': creation.toString() //datetime.tostring
+            new Injector().database.reference().child(_user.uid).child('reminders').reference().push().set({
+              'text': trimmedText,
+              'creation': creation.toString(),
+              'notification': notification?.toString(),
             });
+
+            /*
+            _scaffoldKey.currentState.showSnackBar(new SnackBar(
+              content: new Text('recordatorio guardado'),
+            ));
+            */
+            Navigator.pop(context);
           },
         child: const Icon(Icons.done),
       ),

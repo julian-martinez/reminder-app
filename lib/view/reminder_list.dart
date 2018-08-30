@@ -52,7 +52,7 @@ class _ReminderListState extends State<ReminderList> {
       floatingActionButton: new FloatingActionButton(
         onPressed: (){
           Navigator.push(context, MaterialPageRoute(
-              builder: (context) => Reminder()
+              builder: (context) => Reminder(user: widget.user,)
           ));
         },
         child: const Icon(Icons.add),
