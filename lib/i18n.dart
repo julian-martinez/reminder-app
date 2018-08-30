@@ -4,14 +4,13 @@ import 'package:flutter/foundation.dart' show SynchronousFuture;
 import 'dart:async';
 
 class I18n {
-  I18n(this.locale);
+  I18n(this._locale);
 
-  final Locale locale;
+  Locale _locale;
 
   static I18n of(BuildContext context){
     return Localizations.of<I18n>(context, I18n);
   }
-
 
   static Map<String, Map<Strings, String>> _localizedValues = {
     'en': {
@@ -78,10 +77,11 @@ class I18n {
     }
   };
 
-
   String getValueOf(Strings value) {
-    return _localizedValues[locale.languageCode][value];
+    return _localizedValues[_locale.languageCode][value];
   }
+
+  String get locale => _locale.toString();
 }
 
 enum Strings {

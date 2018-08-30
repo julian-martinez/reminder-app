@@ -99,6 +99,7 @@ class _ReminderState extends State<Reminder> {
               'text': trimmedText,
               'creation': creation.toString(),
               'notification': notification?.toString(),
+              'active': true
             });
 
             /*
