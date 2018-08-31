@@ -1,3 +1,5 @@
+import 'package:firebase_database/firebase_database.dart';
+
 class ReminderData{
 
   String _id;
@@ -18,6 +20,16 @@ class ReminderData{
     if (obj['lat'] != null) this._lat = double.parse(obj['lat']);
     if (obj['lon'] != null) this._lon = double.parse(obj['lon']);
     this._active = obj['active'];
+  }
+
+  ReminderData.fromSnapshot(DataSnapshot snapshot){
+    this._id = snapshot.key;
+    this._text = snapshot.value['text'];
+    this._creationDate = DateTime.parse(snapshot.value['creation']);
+    if (snapshot.value['notification'] != null) this._notificationDate = DateTime.parse(snapshot.value['notification']);
+    if (snapshot.value['lat'] != null) this._lat = double.parse(snapshot.value['lat']);
+    if (snapshot.value['lon'] != null) this._lon = double.parse(snapshot.value['lon']);
+    this._active = snapshot.value['active'];
   }
 
   String get id => _id;

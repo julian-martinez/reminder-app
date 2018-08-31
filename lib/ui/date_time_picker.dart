@@ -45,7 +45,7 @@ class DateTimePicker extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.end,
       children: <Widget>[
         new Expanded(
-          flex: 4,
+          flex: 5,
           child: new _InputDropdown(
             labelText: labelText,
             valueText: new DateFormat.yMMMd().format(selectedDate),
@@ -53,9 +53,10 @@ class DateTimePicker extends StatelessWidget {
             onPressed: () { _selectDate(context); },
           ),
         ),
-        const SizedBox(width: 12.0),
+        //const SizedBox(width: 12.0),
+        new Flexible(child: new Container(), flex: 2,),
         new Expanded(
-          flex: 2,
+          flex: 3,
           child: new _InputDropdown(
             valueText: selectedTime.format(context),
             valueStyle: valueStyle,

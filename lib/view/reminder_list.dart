@@ -8,21 +8,43 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:intl/intl.dart';
 
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
 
 import 'package:fluttery/framing.dart';
 
 class ReminderList extends StatefulWidget {
   ReminderList({Key key, @required this.user}) : super(key: key);
 
-  final FirebaseUser user;
+  FirebaseUser user;
 
   @override
-  _ReminderListState createState() => _ReminderListState();
+  _ReminderListState createState() => _ReminderListState(user);
 }
 
 class _ReminderListState extends State<ReminderList> {
-
   List<ReminderData> _reminderList;
+  DatabaseReference _mainReference;
+
+  _ReminderListState(FirebaseUser user){
+    _mainReference = Injector().database.reference().child(user.uid).child('reminders').reference();
+    _mainReference.onChildAdded.listen(_onEntryAdded);
+    //_mainReference.onChildChanged.listen(_onEntryUpdated);
+  }
+
+  _onEntryAdded(Event event){
+    bool active = event.snapshot.value['active'];
+    if (active)
+    setState(() {
+      _reminderList.add(new ReminderData.fromSnapshot(event.snapshot));
+    });
+  }
+
+  _onEntryUpdated(Event event){
+    var oldValue = _reminderList.singleWhere((entry) => entry.id == event.snapshot.key);
+    setState(() {
+      _reminderList[_reminderList.indexOf(oldValue)] = new ReminderData.fromSnapshot(event.snapshot);
+    });
+  }
 
   void _signOut(BuildContext context) async {
     await Injector().auth.signOut();
@@ -39,6 +61,19 @@ class _ReminderListState extends State<ReminderList> {
 
   @override
   Widget build(BuildContext context) {
+    FirebaseUser _user = widget.user;
+
+    if (_reminderList != null){
+      _reminderList.sort((a,b) {
+        if (a.notificationDate != null){
+          if (b.notificationDate != null) return a.notificationDate.compareTo(b.notificationDate);
+          else return -1;
+        } else {
+          if (b.notificationDate != null) return 1;
+          else return a.creationDate.compareTo(b.creationDate);
+        }
+      });
+    }
 
     return new Scaffold(
       appBar: new AppBar(
@@ -50,7 +85,60 @@ class _ReminderListState extends State<ReminderList> {
         ),
         title: new Text(I18n.of(context).getValueOf(Strings.REMINDERS)),
       ),
-      body: new StreamBuilder(
+      body: _reminderList != null && _reminderList.isNotEmpty ?
+        new ListView.builder(
+          itemCount: _reminderList.length,
+          itemBuilder: (context, i) {
+            return new Dismissible(
+              background: Container(color: Colors.lightBlueAccent,),
+              secondaryBackground: new Icon(Icons.delete),
+              direction: DismissDirection.startToEnd,
+              key: new ObjectKey(_reminderList[i]),
+              onDismissed: (direction) {
+                if (_reminderList.contains(_reminderList[i])){
+                  _mainReference.child(_reminderList[i].id).reference().update({
+                    'active': false
+                  });
+                  Scaffold
+                      .of(context)
+                      .showSnackBar(SnackBar(content: Text('Recordatorio eliminado')));
+
+                  setState(() {
+                    _reminderList.remove(_reminderList[i]);
+                  });
+
+                }
+
+              },
+              child: new Column(
+                children: <Widget>[
+                  new ReminderItem(_reminderList[i]),
+                  new Divider(color: Colors.lightBlueAccent, height: 2.0,)
+                ],
+              )
+            );
+          }
+        )
+        :
+          new Center(
+            child: new Container(
+              child: new Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  new Icon(Icons.event_note, size: 64.0,),
+                  new Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: new Text(I18n.of(context).getValueOf(Strings.NO_CONTENT),
+                      style: new TextStyle(fontSize: 18.0),
+                      textAlign: TextAlign.center,
+                    ),
+                  )
+                ],
+              ),
+            )
+          ),
+      /*
+      new StreamBuilder(
         //TECHNICAL DEBT - loading new items on navigation
         stream: Injector().database
           .reference()
@@ -68,8 +156,10 @@ class _ReminderListState extends State<ReminderList> {
               item['id'] = key;
               ReminderData reminder = ReminderData.map(item);
               List<String> idList = _reminderList.map((r) => r.id).toList();
-              if (!idList.contains(reminder.id)){
-                _reminderList.add(reminder);
+              if (!idList.contains(reminder.id) && reminder.active){
+                setState(() {
+                  _reminderList.add(reminder);
+                });
               }
             });
 
@@ -88,12 +178,36 @@ class _ReminderListState extends State<ReminderList> {
             return new ListView.builder(
                 itemCount: _reminderList.length,
                 itemBuilder: (context, i) {
+                  return new Dismissible(
+                    background: Container(color: Colors.lightBlueAccent,),
+                    secondaryBackground: new Icon(Icons.delete),
+                    direction: DismissDirection.startToEnd,
+                    key: Key(i.toString()),
+                    onDismissed: (direction) {
+                      _reminderList.removeAt(i);
+                      //ACTUALIZAR DB ITEM ACTIVO A FALSO
+                      _mainReference.child(_reminderList[i].id).reference().update({
+                        'active': false
+                      });
+                      Scaffold
+                          .of(context)
+                          .showSnackBar(SnackBar(content: Text('Recordatorio eliminado')));
+                    },
+                    child: new Column(
+                      children: <Widget>[
+                        new ReminderItem(_reminderList[i]),
+                        new Divider(color: Colors.lightBlueAccent, height: 2.0,)
+                      ],
+                    )
+                  );
+                  /*
                   return new Column(
                     children: <Widget>[
                       new ReminderItem(_reminderList[i]),
                       new Divider(color: Colors.lightBlueAccent, height: 2.0,)
                     ],
                   );
+                  */
                 }
             );
           } else {
@@ -117,6 +231,7 @@ class _ReminderListState extends State<ReminderList> {
           }
         }
       ),
+      */
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       floatingActionButton: new FloatingActionButton(
         onPressed: (){
