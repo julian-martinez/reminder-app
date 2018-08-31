@@ -57,26 +57,48 @@ class _ReminderListState extends State<ReminderList> {
           .onValue,
         builder: (context, snap){
           if (snap.hasError) return new Text('Error: ${snap.error}');
-          if (snap.data == null) return new Center(child: new CircularProgressIndicator(),);
+          if (snap.data == null) return new CircularProgressIndicator();
 
           Map<dynamic, dynamic> values = snap.data.snapshot.value;
-          values.forEach((key, value){
-            Map item = new Map.from(value);
-            item['id'] = key;
-            _reminderList.add(ReminderData.map(item));
-          });
-
-          return new ListView.builder(
-              itemCount: _reminderList.length,
-              itemBuilder: (context, i){
-                return new Column(
+          if (values != null) {
+            values.forEach((key, value) {
+              Map item = new Map.from(value);
+              item['id'] = key;
+              _reminderList.add(ReminderData.map(item));
+            });
+          }
+          
+          if (_reminderList.isNotEmpty) {
+            return new ListView.builder(
+                itemCount: _reminderList.length,
+                itemBuilder: (context, i) {
+                  return new Column(
+                    children: <Widget>[
+                      new ReminderItem(_reminderList[i]),
+                      new Divider(color: Colors.lightBlueAccent, height: 2.0,)
+                    ],
+                  );
+                }
+            );
+          } else {
+            return new Center(
+              child: new Container(
+                child: new Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
-                    new ReminderItem(_reminderList[i]),
-                    new Divider(color: Colors.lightBlueAccent, height: 2.0,)
+                    new Icon(Icons.event_note, size: 64.0,),
+                    new Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: new Text(I18n.of(context).getValueOf(Strings.NO_CONTENT),
+                        style: new TextStyle(fontSize: 18.0),
+                        textAlign: TextAlign.center,
+                      ),
+                    )
                   ],
-                );
-              }
-          );
+                ),
+              )
+            );
+          }
         }
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
@@ -185,7 +207,7 @@ class _ReminderItemState extends State<ReminderItem> {
             //flex: 1,
             child: new Padding(
               padding: const EdgeInsets.only(left: 18.0, right: 18.0, top: 18.0, bottom: 18.0),
-              child: new Icon(Icons.gps_fixed, color: Colors.grey,),
+              child: _data.hasLatLon ? new Icon(Icons.gps_fixed, color: Colors.grey,) : new Container(width: 24.0, height: 24.0,),
             ),
           ),
         ],
