@@ -112,21 +112,23 @@ class _ReminderState extends State<Reminder> {
         child: new Row(
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
+            /* LOCATION FEATURE (temporarily disabled)
             new Padding(
-                padding: const EdgeInsets.only(left:24.0, right: 4.0),
+              padding: const EdgeInsets.only(left:24.0, right: 4.0),
               child: new IconButton(
-                  icon: new Icon(Icons.gps_fixed),
-                  color: _activeLocation ? Colors.lightBlue : Colors.black,
-                  onPressed: (){
-                    setState(() {
-                      _activeLocation = !_activeLocation;
-                      _lat = _activeLocation ? 39.5 : null;
-                      _lon = _activeLocation ? 2.5 : null;
-                    });
-                    activateLocation(_activeLocation);
-                  }
+                icon: new Icon(Icons.gps_fixed),
+                color: _activeLocation ? Colors.lightBlue : Colors.black,
+                onPressed: (){
+                  setState(() {
+                    _activeLocation = !_activeLocation;
+                    _lat = _activeLocation ? 39.5 : null;
+                    _lon = _activeLocation ? 2.5 : null;
+                  });
+                  activateLocation(_activeLocation);
+                }
               ),
             ),
+            */
             new Padding(
               padding: const EdgeInsets.only(left:4.0, right: 4.0),
               child: new IconButton(
@@ -135,7 +137,6 @@ class _ReminderState extends State<Reminder> {
                   onPressed: (){
                     setState(() {
                       _activeNotification = !_activeNotification;
-                      //_notification = _activeNotification ? DateTime.now().add(new Duration(minutes: 2)) : null;
                     });
                     activateNotification(_activeNotification);
                   }
