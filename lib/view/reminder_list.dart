@@ -22,6 +22,7 @@ class ReminderList extends StatefulWidget {
 
 class _ReminderListState extends State<ReminderList> {
 
+  List<ReminderData> _reminderList;
 
   void _signOut(BuildContext context) async {
     await Injector().auth.signOut();
@@ -30,15 +31,15 @@ class _ReminderListState extends State<ReminderList> {
     }
   }
 
-
   @override
   void initState() {
+    _reminderList = new List();
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    List<ReminderData> _reminderList = new List();
+
     return new Scaffold(
       appBar: new AppBar(
         leading: new IconButton(
@@ -50,6 +51,7 @@ class _ReminderListState extends State<ReminderList> {
         title: new Text(I18n.of(context).getValueOf(Strings.REMINDERS)),
       ),
       body: new StreamBuilder(
+        //TECHNICAL DEBT - loading new items on navigation
         stream: Injector().database
           .reference()
           .child(widget.user.uid)
@@ -57,14 +59,28 @@ class _ReminderListState extends State<ReminderList> {
           .onValue,
         builder: (context, snap){
           if (snap.hasError) return new Text('Error: ${snap.error}');
-          if (snap.data == null) return new CircularProgressIndicator();
+          if (snap.data == null) return new Container();
 
           Map<dynamic, dynamic> values = snap.data.snapshot.value;
           if (values != null) {
             values.forEach((key, value) {
               Map item = new Map.from(value);
               item['id'] = key;
-              _reminderList.add(ReminderData.map(item));
+              ReminderData reminder = ReminderData.map(item);
+              List<String> idList = _reminderList.map((r) => r.id).toList();
+              if (!idList.contains(reminder.id)){
+                _reminderList.add(reminder);
+              }
+            });
+
+            _reminderList.sort((a,b) {
+              if (a.notificationDate != null){
+                if (b.notificationDate != null) return a.notificationDate.compareTo(b.notificationDate);
+                else return -1;
+              } else {
+                if (b.notificationDate != null) return 1;
+                else return a.creationDate.compareTo(b.creationDate);
+              }
             });
           }
           
@@ -142,39 +158,7 @@ class _ReminderItemState extends State<ReminderItem> {
                   color: Colors.lightBlueAccent
                 ),
                 child: new Stack(
-                  children: <Widget>[
-                    new Align(
-                      widthFactor: 3.0,
-                      heightFactor: 3.0,
-                      child: new Text(_data.notificationDate?.day.toString(),
-                        style : new TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 22.0,
-                          color: Colors.black
-                        ),
-                      ),
-                    ),
-                    new Positioned(
-                      top: 28.0,
-                      left: 8.0,
-                        child: new Text(new DateFormat.MMM(I18n.of(context).locale).format(_data.notificationDate),
-                          style : new TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 18.0,
-                            color: Colors.black
-                          ),
-                        ),
-                    ),
-                    new Positioned(
-                      top: 0.0,
-                      right: 0.0,
-                      child: new Icon(
-                        Icons.add_alert,
-                        color: Colors.grey,
-                        size: 18.0,
-                      ),
-                    )
-                  ],
+                  children: _notificationIconContent(_data)
                 )
               ),
             ),
@@ -214,6 +198,60 @@ class _ReminderItemState extends State<ReminderItem> {
       )
     );
 
+  }
+
+  List<Widget> _notificationIconContent(ReminderData _data){
+    List<Widget> list;
+    if (_data.notificationDate != null){
+      list = [
+        new Align(
+          widthFactor: 3.0,
+          heightFactor: 3.0,
+          child: new Text(new DateFormat('dd').format(_data.notificationDate),
+            style : new TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 22.0,
+                color: Colors.black
+            ),
+          ),
+        ),
+        new Positioned(
+          top: 28.0,
+          left: 8.0,
+          child: new Text(new DateFormat.MMM(I18n.of(context).locale).format(_data.notificationDate),
+            style : new TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 18.0,
+                color: Colors.black
+            ),
+          ),
+        ),
+        new Positioned(
+          top: 0.0,
+          right: 0.0,
+          child: new Icon(
+            Icons.add_alert,
+            color: Colors.grey,
+            size: 18.0,
+          ),
+        )
+      ];
+    } else {
+      list = [
+        new Align(
+          widthFactor: 3.0,
+          heightFactor: 3.0,
+          child: new Text(' - ',
+            style : new TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 22.0,
+                color: Colors.black
+            ),
+          ),
+        ),
+      ];
+    }
+    return list;
   }
 
 }

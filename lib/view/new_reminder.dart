@@ -83,7 +83,7 @@ class _ReminderState extends State<Reminder> {
           ],
         ),
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       floatingActionButton: new FloatingActionButton(
           onPressed: (){
             String trimmedText = reminderController.text.toString().trim();
