@@ -208,7 +208,7 @@ class _LoginState extends State<Login> {
                 height: 60.0,
                       width: 360.0,
                       child: new TextFormFieldCentered(
-                        expanded: true,
+                        dialog: true,
                         controller: rePassController,
                         hintText: I18n.of(context).getValueOf(Strings.FORM_REPASSWORD),
                         prefixIcon: Icons.lock,
@@ -284,7 +284,7 @@ class TextFormFieldCentered extends StatefulWidget {
       this.validator,
       this.obscureText,
       this.onSaved,
-      this.expanded
+      this.dialog
       })
       : super(key: key);
 
@@ -296,7 +296,7 @@ class TextFormFieldCentered extends StatefulWidget {
   FormFieldValidator<String> validator;
   final bool obscureText;
   FormFieldSetter<String> onSaved;
-  final bool expanded;
+  final bool dialog;
 
   @override
   _TextFormFieldCenteredState createState() => _TextFormFieldCenteredState();
@@ -306,60 +306,65 @@ class _TextFormFieldCenteredState extends State<TextFormFieldCentered> {
   @override
   Widget build(BuildContext context) {
     bool _obscureText = widget.obscureText != null ? widget.obscureText : false;
-    bool _expanded = widget.expanded != null ? widget.expanded : false;
-
-    return new Row(
-      children: <Widget>[
-        new Flexible(
-          child: new Container(),
-          flex: _expanded ? null : 1,
-        ),
-        new Flexible(
-          flex: 6,
-          child: new Container(
-            color: Colors.lightBlueAccent,
-            child: new Row(
-              children: <Widget>[
-                new Padding(
-                  padding: const EdgeInsets.only(left: 12.0, right: 12.0),
-                  child: new IconHolder(widget.prefixIcon),
-                ),
-                new Expanded(
-                  child: new Container(
-                    padding: const EdgeInsets.only(left: 12.0, right: 12.0),
-                    color: Colors.white,
-                    child: new TextFormField(
-                      controller: widget.controller,
-                      keyboardType: widget.keyboardType,
-                      obscureText: _obscureText,
-                      validator: widget.validator,
-                      onSaved: widget.onSaved,
-                      decoration: new InputDecoration(
-                        border: InputBorder.none,
-                        contentPadding:
-                            const EdgeInsets.symmetric(vertical: 16.0),
-                        labelText: widget.labelText,
-                        hintText: widget.hintText,
+    bool _dialog = widget.dialog != null ? widget.dialog : false;
+    return new Container(
+      color: _dialog ? Colors.white : Colors.lightBlueAccent,
+      child: new Row(
+        children: <Widget>[
+          new Flexible(
+            child: new Container(),
+            flex: _dialog ? null : 1,
+          ),
+          new Flexible(
+              flex: 6,
+              child: new Container(
+                color: _dialog ? Colors.white : Colors.lightBlueAccent,
+                child: new Row(
+                  children: <Widget>[
+                    new Padding(
+                      padding: const EdgeInsets.only(left: 12.0, right: 12.0),
+                      child: new IconHolder(widget.prefixIcon, _dialog),
+                    ),
+                    new Expanded(
+                      child: new Container(
+                        padding: const EdgeInsets.only(left: 12.0, right: 12.0),
+                        color: _dialog ? Colors.white : Colors.lightBlueAccent,
+                        child: new TextFormField(
+                          controller: widget.controller,
+                          keyboardType: widget.keyboardType,
+                          obscureText: _obscureText,
+                          validator: widget.validator,
+                          onSaved: widget.onSaved,
+                          decoration: new InputDecoration(
+                              border: InputBorder.none,
+                              contentPadding:
+                              const EdgeInsets.symmetric(vertical: 16.0),
+                              labelText: widget.labelText,
+                              hintText: widget.hintText,
+                              hintStyle: new TextStyle(color: Colors.grey)
+                          ),
+                        ),
                       ),
                     ),
-                  ),
+                  ],
                 ),
-              ],
-            ),
-          )),
-        new Flexible(
-          child: new Container(),
-          flex: _expanded ? null : 1,
-        ),
-      ],
+              )),
+          new Flexible(
+            child: new Container(),
+            flex: _dialog ? null : 1,
+          ),
+        ],
+      )
     );
+    //return ;
   }
 }
 
 class IconHolder extends StatelessWidget {
-  IconHolder(this.icon);
+  IconHolder(this.icon, this.dialog);
 
   final IconData icon;
+  final bool dialog;
 
   @override
   Widget build(BuildContext context) {
@@ -369,7 +374,7 @@ class IconHolder extends StatelessWidget {
         child: new Container(
           child: new Icon(
             icon,
-            color: Colors.white,
+            color: dialog ? Colors.lightBlueAccent : Colors.white,
           ),
         ),
       ),
