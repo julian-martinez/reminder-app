@@ -11,6 +11,7 @@ class Injector {
   static Flavor _flavor;
   static final FirebaseAuth _auth = FirebaseAuth.instance;
   static final FirebaseDatabase _database = FirebaseDatabase.instance;
+  static final int _baseTimeIdGenerator = 1535970000000;
 
   static void configure(Flavor flavor){
     _flavor = flavor;
@@ -23,6 +24,7 @@ class Injector {
   Flavor get flavor => _flavor;
   FirebaseAuth get auth => _auth;
   FirebaseDatabase get database => _database;
+  int get baseTimeIdGenerator => _baseTimeIdGenerator;
 
 
 }

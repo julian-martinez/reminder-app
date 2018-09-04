@@ -43,6 +43,7 @@ class I18n {
       Strings.DLGT_COMPLETE_REGISTER: 'Complete your registry',
       Strings.FORM_REPASSWORD: 'Repeat your password',
       Strings.NO_CONTENT: 'You don\'t have any reminder. Tap on the bottom button to add a new one.',
+      Strings.SCHED_NOTIFICATION: 'Scheduled notification',
 
     },
     'es': {
@@ -75,6 +76,7 @@ class I18n {
       Strings.DLGT_COMPLETE_REGISTER: 'Completa tu registro',
       Strings.FORM_REPASSWORD: 'Repite tu contraseña',
       Strings.NO_CONTENT: 'No tienes ningún recordatorio. Pulsa en el botón inferior para añadir uno nuevo.',
+      Strings.SCHED_NOTIFICATION: 'Notificación programada',
 
     }
   };
@@ -115,7 +117,8 @@ enum Strings {
   DLGM_SEND_EMAIL,
   DLGT_COMPLETE_REGISTER,
   FORM_REPASSWORD,
-  NO_CONTENT
+  NO_CONTENT,
+  SCHED_NOTIFICATION,
 }
 
 class I18nDelegate extends LocalizationsDelegate<I18n> {
