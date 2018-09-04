@@ -70,6 +70,7 @@ class _ReminderListState extends State<ReminderList> {
   }
 
   Future onSelectNotification(String payload) async {
+    /*
     showDialog(
       context: context,
       builder: (_) => new AlertDialog(
@@ -77,6 +78,7 @@ class _ReminderListState extends State<ReminderList> {
         content: new Text('$payload'),
       ),
     );
+    */
   }
 
   @override
