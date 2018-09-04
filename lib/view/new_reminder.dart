@@ -22,6 +22,7 @@ class Reminder extends StatefulWidget {
 
 class _ReminderState extends State<Reminder> {
   FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
+  final _formKey = GlobalKey<FormState>();
 
   bool _activeNotification;
   bool _activeLocation;
@@ -76,12 +77,6 @@ class _ReminderState extends State<Reminder> {
   }
 
   @override
-  void dispose() {
-    reminderController.dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
     FirebaseUser _user = widget.user;
@@ -105,11 +100,12 @@ class _ReminderState extends State<Reminder> {
                   padding: const EdgeInsets.all(24.0),
                   child: new TextFormField(
                     controller: reminderController,
+                    key: _formKey,
+                    keyboardType: TextInputType.text,
                     style: new TextStyle(
                       fontSize: 18.0,
                       color: Colors.black
                     ),
-                    keyboardType: TextInputType.text,
                     maxLines: 255,
                     decoration: new InputDecoration(
                       border: InputBorder.none,
