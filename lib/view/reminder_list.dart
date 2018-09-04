@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
+import 'dart:async';
+import 'package:intl/intl.dart';
 import '../i18n.dart';
-import 'new_reminder.dart';
 import '../dependency_injection.dart';
 import '../model/reminder.dart';
-import 'dart:async';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:intl/intl.dart';
+import 'new_reminder.dart';
 
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
@@ -111,8 +110,15 @@ class _ReminderListState extends State<ReminderList> {
           itemCount: _reminderList.length,
           itemBuilder: (context, i) {
             return new Dismissible(
-              background: Container(color: Colors.lightBlueAccent,),
-              secondaryBackground: new Icon(Icons.delete),
+              background: Container(
+                height: 48.0,
+                alignment: Alignment.center,
+                color: Colors.lightBlueAccent,
+                  child: const ListTile(
+                      leading: Icon(Icons.delete, color: Colors.white, size: 36.0)
+                  )
+              ),
+              //secondaryBackground: new Icon(Icons.delete),
               direction: DismissDirection.startToEnd,
               key: new ObjectKey(_reminderList[i]),
               onDismissed: (direction) {
@@ -125,7 +131,7 @@ class _ReminderListState extends State<ReminderList> {
                   flutterLocalNotificationsPlugin.cancel(notificationId);
                   Scaffold
                       .of(context)
-                      .showSnackBar(SnackBar(content: Text('Recordatorio eliminado')));
+                      .showSnackBar(SnackBar(content: Text(I18n.of(context).getValueOf(Strings.RM_REMINDER))));
 
                   setState(() {
                     _reminderList.remove(_reminderList[i]);

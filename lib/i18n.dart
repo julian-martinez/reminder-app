@@ -44,6 +44,7 @@ class I18n {
       Strings.FORM_REPASSWORD: 'Repeat your password',
       Strings.NO_CONTENT: 'You don\'t have any reminder. Tap on the bottom button to add a new one.',
       Strings.SCHED_NOTIFICATION: 'Scheduled notification',
+      Strings.RM_REMINDER: 'Reminder removed',
 
     },
     'es': {
@@ -77,6 +78,7 @@ class I18n {
       Strings.FORM_REPASSWORD: 'Repite tu contraseña',
       Strings.NO_CONTENT: 'No tienes ningún recordatorio. Pulsa en el botón inferior para añadir uno nuevo.',
       Strings.SCHED_NOTIFICATION: 'Notificación programada',
+      Strings.RM_REMINDER: 'Recordatorio eliminado',
 
     }
   };
@@ -119,6 +121,7 @@ enum Strings {
   FORM_REPASSWORD,
   NO_CONTENT,
   SCHED_NOTIFICATION,
+  RM_REMINDER,
 }
 
 class I18nDelegate extends LocalizationsDelegate<I18n> {
