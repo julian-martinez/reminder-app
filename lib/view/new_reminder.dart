@@ -36,8 +36,8 @@ class _ReminderState extends State<Reminder> {
     showDialog(
         context: context,
       builder: (_) => new AlertDialog(
-        title: const Text('Here is the payload'),
-        content: new Text('Payload: $payload'),
+        title: const Text(''),
+        content: new Text('$payload'),
       ),
     );
   }

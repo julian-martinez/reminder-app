@@ -7,6 +7,8 @@ import 'dart:async';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:intl/intl.dart';
 
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 
@@ -22,6 +24,8 @@ class ReminderList extends StatefulWidget {
 }
 
 class _ReminderListState extends State<ReminderList> {
+  FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
+
   List<ReminderData> _reminderList;
   DatabaseReference _mainReference;
 
@@ -55,8 +59,25 @@ class _ReminderListState extends State<ReminderList> {
 
   @override
   void initState() {
-    _reminderList = new List();
     super.initState();
+    _reminderList = new List();
+
+    var initializationSettingsAndroid =
+    new AndroidInitializationSettings('icon');
+    var initializationSettingsIOS = new IOSInitializationSettings();
+    var initializationSettings = new InitializationSettings(initializationSettingsAndroid, initializationSettingsIOS);
+    flutterLocalNotificationsPlugin = new FlutterLocalNotificationsPlugin();
+    flutterLocalNotificationsPlugin.initialize(initializationSettings, selectNotification: onSelectNotification);
+  }
+
+  Future onSelectNotification(String payload) async {
+    showDialog(
+      context: context,
+      builder: (_) => new AlertDialog(
+        title: const Text(''),
+        content: new Text('$payload'),
+      ),
+    );
   }
 
   @override
@@ -99,6 +120,9 @@ class _ReminderListState extends State<ReminderList> {
                   _mainReference.child(_reminderList[i].id).reference().update({
                     'active': false
                   });
+
+                  int notificationId = _reminderList[i].creationDate.millisecondsSinceEpoch - Injector().baseTimeIdGenerator;
+                  flutterLocalNotificationsPlugin.cancel(notificationId);
                   Scaffold
                       .of(context)
                       .showSnackBar(SnackBar(content: Text('Recordatorio eliminado')));
@@ -137,101 +161,6 @@ class _ReminderListState extends State<ReminderList> {
               ),
             )
           ),
-      /*
-      new StreamBuilder(
-        //TECHNICAL DEBT - loading new items on navigation
-        stream: Injector().database
-          .reference()
-          .child(widget.user.uid)
-          .child('reminders')
-          .onValue,
-        builder: (context, snap){
-          if (snap.hasError) return new Text('Error: ${snap.error}');
-          if (snap.data == null) return new Container();
-
-          Map<dynamic, dynamic> values = snap.data.snapshot.value;
-          if (values != null) {
-            values.forEach((key, value) {
-              Map item = new Map.from(value);
-              item['id'] = key;
-              ReminderData reminder = ReminderData.map(item);
-              List<String> idList = _reminderList.map((r) => r.id).toList();
-              if (!idList.contains(reminder.id) && reminder.active){
-                setState(() {
-                  _reminderList.add(reminder);
-                });
-              }
-            });
-
-            _reminderList.sort((a,b) {
-              if (a.notificationDate != null){
-                if (b.notificationDate != null) return a.notificationDate.compareTo(b.notificationDate);
-                else return -1;
-              } else {
-                if (b.notificationDate != null) return 1;
-                else return a.creationDate.compareTo(b.creationDate);
-              }
-            });
-          }
-          
-          if (_reminderList.isNotEmpty) {
-            return new ListView.builder(
-                itemCount: _reminderList.length,
-                itemBuilder: (context, i) {
-                  return new Dismissible(
-                    background: Container(color: Colors.lightBlueAccent,),
-                    secondaryBackground: new Icon(Icons.delete),
-                    direction: DismissDirection.startToEnd,
-                    key: Key(i.toString()),
-                    onDismissed: (direction) {
-                      _reminderList.removeAt(i);
-                      //ACTUALIZAR DB ITEM ACTIVO A FALSO
-                      _mainReference.child(_reminderList[i].id).reference().update({
-                        'active': false
-                      });
-                      Scaffold
-                          .of(context)
-                          .showSnackBar(SnackBar(content: Text('Recordatorio eliminado')));
-                    },
-                    child: new Column(
-                      children: <Widget>[
-                        new ReminderItem(_reminderList[i]),
-                        new Divider(color: Colors.lightBlueAccent, height: 2.0,)
-                      ],
-                    )
-                  );
-                  /*
-                  return new Column(
-                    children: <Widget>[
-                      new ReminderItem(_reminderList[i]),
-                      new Divider(color: Colors.lightBlueAccent, height: 2.0,)
-                    ],
-                  );
-                  */
-                }
-            );
-          } else {
-            return new Center(
-              child: new Container(
-                child: new Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    new Icon(Icons.event_note, size: 64.0,),
-                    new Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: new Text(I18n.of(context).getValueOf(Strings.NO_CONTENT),
-                        style: new TextStyle(fontSize: 18.0),
-                        textAlign: TextAlign.center,
-                      ),
-                    )
-                  ],
-                ),
-              )
-            );
-          }
-        }
-      ),
-      */
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       floatingActionButton: new FloatingActionButton(
         onPressed: (){
