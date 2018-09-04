@@ -34,6 +34,7 @@ class _ReminderState extends State<Reminder> {
   final reminderController = new TextEditingController();
 
   Future onSelectNotification(String payload) async {
+    /*
     showDialog(
         context: context,
       builder: (_) => new AlertDialog(
@@ -41,6 +42,7 @@ class _ReminderState extends State<Reminder> {
         content: new Text('$payload'),
       ),
     );
+    */
   }
 
   Future _showNotificationWithDefaultSound(int id, DateTime scheduledDateTime, String message) async {
@@ -56,7 +58,7 @@ class _ReminderState extends State<Reminder> {
       message,
       scheduledDateTime,
       platformChannelSpecifics,
-      payload: 'Default_Sound',
+      payload: '',
     );
   }
 
