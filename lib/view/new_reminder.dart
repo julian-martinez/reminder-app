@@ -198,6 +198,7 @@ class _ReminderState extends State<Reminder> {
             ),
             new Flexible(
               child: new DateTimePicker(
+                buildContext: context,
                 labelText: I18n.of(context).getValueOf(Strings.NOTIFY_AT),
                 selectedDate: _ntDate,
                 selectedTime: _ntTime,
@@ -212,11 +213,11 @@ class _ReminderState extends State<Reminder> {
                   });
                 },
               ),
-              flex: 12
+              flex: 18
             ),
             new Flexible(
                 child: new Container(),
-              flex: 4,
+              flex: 1,
             ),
           ],
         ),

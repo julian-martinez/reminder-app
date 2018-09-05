@@ -2,9 +2,12 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:intl/intl.dart';
 
+import '../i18n.dart';
+
 class DateTimePicker extends StatelessWidget {
   const DateTimePicker({
     Key key,
+    this.buildContext,
     this.labelText,
     this.selectedDate,
     this.selectedTime,
@@ -12,6 +15,7 @@ class DateTimePicker extends StatelessWidget {
     this.selectTime
   }) : super(key: key);
 
+  final BuildContext buildContext;
   final String labelText;
   final DateTime selectedDate;
   final TimeOfDay selectedTime;
@@ -48,13 +52,13 @@ class DateTimePicker extends StatelessWidget {
           flex: 5,
           child: new _InputDropdown(
             labelText: labelText,
-            valueText: new DateFormat.yMMMd().format(selectedDate),
+            valueText: new DateFormat.yMMMd(I18n.of(buildContext).locale).format(selectedDate),
             valueStyle: valueStyle,
             onPressed: () { _selectDate(context); },
           ),
         ),
         //const SizedBox(width: 12.0),
-        new Flexible(child: new Container(), flex: 2,),
+        new Flexible(child: new Container(), flex: 4,),
         new Expanded(
           flex: 3,
           child: new _InputDropdown(
