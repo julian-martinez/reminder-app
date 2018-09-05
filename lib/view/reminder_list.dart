@@ -228,14 +228,10 @@ class _ReminderItemState extends State<ReminderItem> {
           new Container(
             //flex: 1,
             child: new Padding(
-              padding: const EdgeInsets.only(left: 18.0, right: 9.0, top: 8.0, bottom: 8.0),
+              padding: const EdgeInsets.only(left: 10.0, right: 1.0,),
               child: new Container(
-                width: 48.0,
-                height: 48.0,
-                decoration: new BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: Colors.lightBlueAccent
-                ),
+                width: 52.0,
+                height: 52.0,
                 child: new Stack(
                   children: _notificationIconContent(_data)
                 )
@@ -284,19 +280,28 @@ class _ReminderItemState extends State<ReminderItem> {
     if (_data.notificationDate != null){
       list = [
         new Align(
-          widthFactor: 3.0,
-          heightFactor: 3.0,
+          alignment: Alignment.center,
+          child: new Container(
+            width: 48.0,
+            height: 48.0,
+            decoration: new BoxDecoration(
+                shape: BoxShape.circle,
+                color: Colors.lightBlueAccent
+            ),
+          ),
+        ),
+        new Align(
+          alignment: Alignment(0.0, -0.2),
           child: new Text(new DateFormat('dd').format(_data.notificationDate),
             style : new TextStyle(
                 fontWeight: FontWeight.bold,
-                fontSize: 22.0,
+                fontSize: 21.0,
                 color: Colors.black
             ),
           ),
         ),
-        new Positioned(
-          top: 28.0,
-          left: 8.0,
+        new Align(
+          alignment: Alignment(0.2, 0.8),
           child: new Text(new DateFormat.MMM(I18n.of(context).locale).format(_data.notificationDate),
             style : new TextStyle(
                 fontWeight: FontWeight.bold,
@@ -305,29 +310,36 @@ class _ReminderItemState extends State<ReminderItem> {
             ),
           ),
         ),
-        new Positioned(
-          top: 0.0,
-          right: 0.0,
+        new Align(
+          alignment: Alignment.topRight,
           child: new Icon(
-            Icons.add_alert,
-            color: Colors.grey,
-            size: 18.0,
+            Icons.notifications_active,
+            color: Colors.deepOrange,
+            size: 20.0,
           ),
         )
       ];
     } else {
       list = [
         new Align(
-          widthFactor: 3.0,
-          heightFactor: 3.0,
-          child: new Text(' - ',
-            style : new TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 22.0,
-                color: Colors.black
+          alignment: Alignment.center,
+          child: new Container(
+            width: 48.0,
+            height: 48.0,
+            decoration: new BoxDecoration(
+                shape: BoxShape.circle,
+                color: Colors.lightBlueAccent
             ),
           ),
         ),
+        new Align(
+          alignment: Alignment.topRight,
+          child: new Icon(
+            Icons.notifications_off,
+            color: Colors.deepOrange,
+            size: 20.0,
+          ),
+        )
       ];
     }
     return list;
