@@ -27,6 +27,7 @@ class _ReminderListState extends State<ReminderList> {
 
   List<ReminderData> _reminderList;
   DatabaseReference _mainReference;
+  bool _isFloatingButtonEnabled;
 
   _ReminderListState(FirebaseUser user){
     _mainReference = Injector().database.reference().child(user.uid).child('reminders').reference();
@@ -35,6 +36,12 @@ class _ReminderListState extends State<ReminderList> {
   }
 
   _onEntryAdded(Event event){
+    if (_reminderList == null){
+      setState(() {
+        _reminderList = new List();
+        _isFloatingButtonEnabled = true;
+      });
+    }
     bool active = event.snapshot.value['active'];
     if (active)
     setState(() {
@@ -59,7 +66,8 @@ class _ReminderListState extends State<ReminderList> {
   @override
   void initState() {
     super.initState();
-    _reminderList = new List();
+    _isFloatingButtonEnabled = false;
+    //_reminderList = new List();
 
     var initializationSettingsAndroid =
     new AndroidInitializationSettings('icon');
@@ -83,7 +91,6 @@ class _ReminderListState extends State<ReminderList> {
 
   @override
   Widget build(BuildContext context) {
-    FirebaseUser _user = widget.user;
 
     if (_reminderList != null){
       _reminderList.sort((a,b) {
@@ -107,52 +114,37 @@ class _ReminderListState extends State<ReminderList> {
         ),
         title: new Text(I18n.of(context).getValueOf(Strings.REMINDERS)),
       ),
-      body: _reminderList != null && _reminderList.isNotEmpty ?
-        new ListView.builder(
-          itemCount: _reminderList.length,
-          itemBuilder: (context, i) {
-            return new Dismissible(
-              background: Container(
-                height: 48.0,
-                alignment: Alignment.center,
-                color: Colors.lightBlueAccent,
-                  child: const ListTile(
-                      leading: Icon(Icons.delete, color: Colors.white, size: 36.0)
-                  )
+      body: displayContent(_reminderList),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
+      floatingActionButton: _isFloatingButtonEnabled ? new FloatingActionButton(
+        onPressed: (){
+          Navigator.push(context, MaterialPageRoute(
+              builder: (context) => Reminder(user: widget.user,)
+          ));
+        },
+        child: const Icon(Icons.add),
+      )
+      : null,
+    );
+  }
+
+  Widget displayContent(List<ReminderData> reminderList){
+    if (reminderList == null){
+        return new Center(
+          child: new Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              new CircularProgressIndicator(),
+              new Padding(
+                padding: const EdgeInsets.all(24.0),
+                child: new Text(I18n.of(context).getValueOf(Strings.LOADING_CONTENT)),
               ),
-              //secondaryBackground: new Icon(Icons.delete),
-              direction: DismissDirection.startToEnd,
-              key: new ObjectKey(_reminderList[i]),
-              onDismissed: (direction) {
-                if (_reminderList.contains(_reminderList[i])){
-                  _mainReference.child(_reminderList[i].id).reference().update({
-                    'active': false
-                  });
-
-                  int notificationId = _reminderList[i].creationDate.millisecondsSinceEpoch - Injector().baseTimeIdGenerator;
-                  flutterLocalNotificationsPlugin.cancel(notificationId);
-                  Scaffold
-                      .of(context)
-                      .showSnackBar(SnackBar(content: Text(I18n.of(context).getValueOf(Strings.RM_REMINDER))));
-
-                  setState(() {
-                    _reminderList.remove(_reminderList[i]);
-                  });
-
-                }
-
-              },
-              child: new Column(
-                children: <Widget>[
-                  new ReminderItem(_reminderList[i]),
-                  new Divider(color: Colors.lightBlueAccent, height: 2.0,)
-                ],
-              )
-            );
-          }
-        )
-        :
-          new Center(
+            ],
+          ),
+        );
+    } else {
+      if (reminderList.isEmpty){
+        return new Center(
             child: new Container(
               child: new Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -168,18 +160,53 @@ class _ReminderListState extends State<ReminderList> {
                 ],
               ),
             )
-          ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
-      floatingActionButton: new FloatingActionButton(
-        onPressed: (){
-          Navigator.push(context, MaterialPageRoute(
-              builder: (context) => Reminder(user: widget.user,)
-          ));
-        },
-        child: const Icon(Icons.add),
-      ),
-    );
+        );
+      } else {
+        return new ListView.builder(
+            itemCount: reminderList.length,
+            itemBuilder: (context, i) {
+              return new Dismissible(
+                  background: Container(
+                      height: 48.0,
+                      alignment: Alignment.center,
+                      color: Colors.lightBlueAccent,
+                      child: const ListTile(
+                          leading: Icon(Icons.delete, color: Colors.white, size: 36.0)
+                      )
+                  ),
+                  //secondaryBackground: new Icon(Icons.delete),
+                  direction: DismissDirection.startToEnd,
+                  key: new ObjectKey(reminderList[i]),
+                  onDismissed: (direction) {
+                    if (reminderList.contains(reminderList[i])){
+                      _mainReference.child(reminderList[i].id).reference().update({
+                        'active': false
+                      });
+
+                      int notificationId = reminderList[i].creationDate.millisecondsSinceEpoch - Injector().baseTimeIdGenerator;
+                      flutterLocalNotificationsPlugin.cancel(notificationId);
+                      Scaffold
+                          .of(context)
+                          .showSnackBar(SnackBar(content: Text(I18n.of(context).getValueOf(Strings.RM_REMINDER))));
+
+                      setState(() {
+                        reminderList.remove(reminderList[i]);
+                      });
+                    }
+                  },
+                  child: new Column(
+                    children: <Widget>[
+                      new ReminderItem(reminderList[i]),
+                      new Divider(color: Colors.lightBlueAccent, height: 1.0,)
+                    ],
+                  )
+              );
+            }
+        );
+      }
+    }
   }
+
 }
 
 class ReminderItem extends StatefulWidget {
@@ -249,8 +276,8 @@ class _ReminderItemState extends State<ReminderItem> {
         ],
       )
     );
-
   }
+
 
   List<Widget> _notificationIconContent(ReminderData _data){
     List<Widget> list;

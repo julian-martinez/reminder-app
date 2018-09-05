@@ -45,6 +45,7 @@ class I18n {
       Strings.NO_CONTENT: 'You don\'t have any reminder. Tap on the bottom button to add a new one.',
       Strings.SCHED_NOTIFICATION: 'Scheduled notification',
       Strings.RM_REMINDER: 'Reminder removed',
+      Strings.LOADING_CONTENT: 'Loading content',
 
     },
     'es': {
@@ -79,6 +80,7 @@ class I18n {
       Strings.NO_CONTENT: 'No tienes ningún recordatorio. Pulsa en el botón inferior para añadir uno nuevo.',
       Strings.SCHED_NOTIFICATION: 'Notificación programada',
       Strings.RM_REMINDER: 'Recordatorio eliminado',
+      Strings.LOADING_CONTENT: 'Cargando contenido',
 
     }
   };
@@ -122,6 +124,7 @@ enum Strings {
   NO_CONTENT,
   SCHED_NOTIFICATION,
   RM_REMINDER,
+  LOADING_CONTENT,
 }
 
 class I18nDelegate extends LocalizationsDelegate<I18n> {
