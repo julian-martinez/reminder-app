@@ -12,9 +12,11 @@ import 'package:flutter/services.dart';
 import 'package:fluttery/framing.dart';
 
 class Reminder extends StatefulWidget {
-  Reminder({Key key, @required this.user}) : super(key: key);
+  Reminder({Key key, @required this.user, this.reminderText, this.existentNotification}) : super(key: key);
 
   final FirebaseUser user;
+  final String reminderText;
+  final DateTime existentNotification;
 
   @override
   _ReminderState createState() => _ReminderState();
@@ -31,7 +33,7 @@ class _ReminderState extends State<Reminder> {
   DateTime _ntDate;
   TimeOfDay _ntTime;
 
-  final reminderController = new TextEditingController();
+  TextEditingController _reminderController;
 
   Future onSelectNotification(String payload) async {
     /*
@@ -65,10 +67,20 @@ class _ReminderState extends State<Reminder> {
   @override
   void initState() {
     super.initState();
-    _activeNotification = false;
+    if (widget.existentNotification != null){
+      _activeNotification = true;
+      _ntDate = widget.existentNotification;
+      _ntTime = TimeOfDay.fromDateTime(widget.existentNotification);
+    } else {
+      _activeNotification = false;
+      _ntDate = new DateTime.now();
+      _ntTime = TimeOfDay.fromDateTime(_ntDate);
+    }
+
+    _reminderController = widget.reminderText != null ?
+    new TextEditingController(text: widget.reminderText) : new TextEditingController();
+
     _activeLocation = false;
-    _ntDate = new DateTime.now();
-    _ntTime = TimeOfDay.fromDateTime(_ntDate);
 
     var initializationSettingsAndroid =
     new AndroidInitializationSettings('icon');
@@ -101,7 +113,7 @@ class _ReminderState extends State<Reminder> {
               child: new Padding(
                   padding: const EdgeInsets.all(24.0),
                   child: new TextFormField(
-                    controller: reminderController,
+                    controller: _reminderController,
                     key: _formKey,
                     keyboardType: TextInputType.text,
                     style: new TextStyle(
@@ -122,9 +134,9 @@ class _ReminderState extends State<Reminder> {
         ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      floatingActionButton: new FloatingActionButton(
+      floatingActionButton: widget.reminderText == null ? new FloatingActionButton(
         onPressed: (){
-          String trimmedText = reminderController.text.toString().trim();
+          String trimmedText = _reminderController.text.toString().trim();
           DateTime notification = new DateTime(_ntDate.year, _ntDate.month, _ntDate.day, _ntTime.hour, _ntTime.minute);
           DateTime creation = DateTime.now();
           if (notification.isBefore(creation)) notification = null;
@@ -145,7 +157,7 @@ class _ReminderState extends State<Reminder> {
           Navigator.pop(context);
         },
         child: const Icon(Icons.done),
-      ),
+      ) : null,
       bottomNavigationBar: new BottomAppBar(
         hasNotch: true,
         child: new Row(
@@ -174,10 +186,12 @@ class _ReminderState extends State<Reminder> {
                   icon: new Icon(Icons.add_alert),
                   color: _activeNotification ? Colors.lightBlue : Colors.black,
                   onPressed: (){
-                    setState(() {
-                      _activeNotification = !_activeNotification;
-                    });
-                    activateNotification(_activeNotification);
+                    if (widget.reminderText == null) {
+                      setState(() {
+                        _activeNotification = !_activeNotification;
+                      });
+                      activateNotification(_activeNotification);
+                    }
                   }
               )
             ),
@@ -199,6 +213,7 @@ class _ReminderState extends State<Reminder> {
             new Flexible(
               child: new DateTimePicker(
                 buildContext: context,
+                enabled: widget.reminderText == null ? true : false,
                 labelText: I18n.of(context).getValueOf(Strings.NOTIFY_AT),
                 selectedDate: _ntDate,
                 selectedTime: _ntTime,
@@ -248,6 +263,7 @@ class _ReminderState extends State<Reminder> {
 
 }
 
+/*
 class SecondScreen extends StatefulWidget {
   final String payload;
   SecondScreen(this.payload);
@@ -280,4 +296,5 @@ class SecondScreenState extends State<SecondScreen> {
     );
   }
 }
+*/
 

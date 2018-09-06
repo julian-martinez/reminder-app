@@ -218,10 +218,12 @@ class _ReminderListState extends State<ReminderList> {
                   },
                   child: new Column(
                     children: <Widget>[
-                      new ReminderItem(reminderList[i]),
+                      new ReminderItem(reminderList[i], widget.user),
                       new Divider(color: Colors.lightBlueAccent, height: 1.0,)
                     ],
                   )
+
+
               );
             }
         );
@@ -232,9 +234,10 @@ class _ReminderListState extends State<ReminderList> {
 }
 
 class ReminderItem extends StatefulWidget {
-  ReminderItem(this.data);
+  ReminderItem(this.data, this.user);
 
   final ReminderData data;
+  final FirebaseUser user;
 
   @override
   _ReminderItemState createState() => _ReminderItemState();
@@ -244,54 +247,66 @@ class _ReminderItemState extends State<ReminderItem> {
   @override
   Widget build(BuildContext context) {
     ReminderData _data = widget.data;
-    return new Container(
-      child: new Row(
-        children: <Widget>[
-          new Container(
-            //flex: 1,
-            child: new Padding(
-              padding: const EdgeInsets.only(left: 10.0, right: 1.0,),
-              child: new Container(
-                width: 52.0,
-                height: 52.0,
-                child: new Stack(
-                  children: _notificationIconContent(_data)
-                )
+
+    return new InkWell(
+      onTap: () {
+        Navigator.push(context, MaterialPageRoute(
+            builder: (context) => Reminder(
+              user: widget.user,
+              reminderText: _data.text,
+              existentNotification: _data.notificationDate,
+            )
+        ));
+      },
+      child: new Container(
+          child: new Row(
+            children: <Widget>[
+              new Container(
+                //flex: 1,
+                child: new Padding(
+                  padding: const EdgeInsets.only(left: 10.0, right: 1.0,),
+                  child: new Container(
+                      width: 52.0,
+                      height: 52.0,
+                      child: new Stack(
+                          children: _notificationIconContent(_data)
+                      )
+                  ),
+                ),
               ),
-            ),
-          ),
-          new Expanded(
-            child: new Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                new Container(
-                  height: 24.0,
-                  padding: const EdgeInsets.only(left: 12.0, top: 2.0, bottom: 4.0),
-                  child: new Text(_data.text.toString(),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: new TextStyle(fontSize: 16.0),
-                  ),
+              new Expanded(
+                child: new Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    new Container(
+                      height: 24.0,
+                      padding: const EdgeInsets.only(left: 12.0, top: 2.0, bottom: 4.0),
+                      child: new Text(_data.text.toString(),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: new TextStyle(fontSize: 16.0),
+                      ),
+                    ),
+                    new Container(
+                      alignment: Alignment.centerRight,
+                      height: 24.0,
+                      padding: const EdgeInsets.only(left: 12.0, top: 4.0, bottom: 2.0),
+                      child: new Text(new DateFormat.yMMMd(I18n.of(context).locale).add_Hm().format(_data.creationDate),
+                        style: new TextStyle(fontStyle: FontStyle.italic),
+                      ),
+                    ),
+                  ],
                 ),
-                new Container(
-                  alignment: Alignment.centerRight,
-                  height: 24.0,
-                  padding: const EdgeInsets.only(left: 12.0, top: 4.0, bottom: 2.0),
-                  child: new Text(new DateFormat.yMMMd(I18n.of(context).locale).add_Hm().format(_data.creationDate),
-                    style: new TextStyle(fontStyle: FontStyle.italic),
-                  ),
+              ),
+              new Container(
+                //flex: 1,
+                child: new Padding(
+                  padding: const EdgeInsets.only(left: 18.0, right: 18.0, top: 18.0, bottom: 18.0),
+                  child: _data.hasLatLon ? new Icon(Icons.gps_fixed, color: Colors.grey,) : new Container(width: 24.0, height: 24.0,),
                 ),
-              ],
-            ),
-          ),
-          new Container(
-            //flex: 1,
-            child: new Padding(
-              padding: const EdgeInsets.only(left: 18.0, right: 18.0, top: 18.0, bottom: 18.0),
-              child: _data.hasLatLon ? new Icon(Icons.gps_fixed, color: Colors.grey,) : new Container(width: 24.0, height: 24.0,),
-            ),
-          ),
-        ],
+              ),
+            ],
+          )
       )
     );
   }
