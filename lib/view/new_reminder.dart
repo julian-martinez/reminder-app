@@ -35,6 +35,8 @@ class _ReminderState extends State<Reminder> {
 
   TextEditingController _reminderController;
 
+  bool _newReminder = widget.reminderText == null;
+
   Future onSelectNotification(String payload) async {
     /*
     showDialog(
@@ -134,7 +136,7 @@ class _ReminderState extends State<Reminder> {
         ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      floatingActionButton: widget.reminderText == null ? new FloatingActionButton(
+      floatingActionButton: _newReminder ? new FloatingActionButton(
         onPressed: (){
           String trimmedText = _reminderController.text.toString().trim();
           DateTime notification = new DateTime(_ntDate.year, _ntDate.month, _ntDate.day, _ntTime.hour, _ntTime.minute);
@@ -186,7 +188,7 @@ class _ReminderState extends State<Reminder> {
                   icon: new Icon(Icons.add_alert),
                   color: _activeNotification ? Colors.lightBlue : Colors.black,
                   onPressed: (){
-                    if (widget.reminderText == null) {
+                    if (_newReminder) {
                       setState(() {
                         _activeNotification = !_activeNotification;
                       });
@@ -213,7 +215,7 @@ class _ReminderState extends State<Reminder> {
             new Flexible(
               child: new DateTimePicker(
                 buildContext: context,
-                enabled: widget.reminderText == null ? true : false,
+                enabled: _newReminder ? true : false,
                 labelText: I18n.of(context).getValueOf(Strings.NOTIFY_AT),
                 selectedDate: _ntDate,
                 selectedTime: _ntTime,
