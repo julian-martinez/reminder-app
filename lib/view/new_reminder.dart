@@ -35,21 +35,12 @@ class _ReminderState extends State<Reminder> {
 
   TextEditingController _reminderController;
 
-  bool _newReminder = widget.reminderText == null;
+  bool _newReminder;
 
   Future onSelectNotification(String payload) async {
-    /*
-    showDialog(
-        context: context,
-      builder: (_) => new AlertDialog(
-        title: const Text(''),
-        content: new Text('$payload'),
-      ),
-    );
-    */
   }
 
-  Future _showNotificationWithDefaultSound(int id, DateTime scheduledDateTime, String message) async {
+  Future _showNotificationWithDefaultSound(int generatedId, String firebaseKey, DateTime scheduledDateTime, String message) async {
     var androidPlatformChannelSpecifics = new AndroidNotificationDetails(
         'com.easyoneapps.reminder', 'reminder-app', 'reminder-desc',
         importance: Importance.Max, priority: Priority.High);
@@ -57,12 +48,12 @@ class _ReminderState extends State<Reminder> {
     var platformChannelSpecifics = new NotificationDetails(
         androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
     await flutterLocalNotificationsPlugin.schedule(
-      id,
+      generatedId,
       I18n.of(context).getValueOf(Strings.SCHED_NOTIFICATION),
       message,
       scheduledDateTime,
       platformChannelSpecifics,
-      payload: '',
+      //payload: firebaseKey,
     );
   }
 
@@ -79,7 +70,8 @@ class _ReminderState extends State<Reminder> {
       _ntTime = TimeOfDay.fromDateTime(_ntDate);
     }
 
-    _reminderController = widget.reminderText != null ?
+    _newReminder = widget.reminderText == null;
+    _reminderController = !_newReminder ?
     new TextEditingController(text: widget.reminderText) : new TextEditingController();
 
     _activeLocation = false;
@@ -106,7 +98,7 @@ class _ReminderState extends State<Reminder> {
               Navigator.pop(context);
             }
         ),
-        title: new Text(I18n.of(context).getValueOf(Strings.NEW_REMINDER)),
+        title: new Text(I18n.of(context).getValueOf(_newReminder ? Strings.NEW_REMINDER : Strings.REMINDER)),
       ),
       body: new Container(
         child: new Column(
@@ -143,7 +135,8 @@ class _ReminderState extends State<Reminder> {
           DateTime creation = DateTime.now();
           if (notification.isBefore(creation)) notification = null;
 
-          Injector().database.reference().child(_user.uid).child('reminders').reference().push().set({
+          var newReference = Injector().database.reference().child(_user.uid).child('reminders').reference().push();
+          newReference.set({
             'text': trimmedText,
             'creation': creation.toString(),
             'notification': notification?.toString(),
@@ -153,7 +146,7 @@ class _ReminderState extends State<Reminder> {
           if (notification != null) {
             int notificationId = creation.millisecondsSinceEpoch - Injector().baseTimeIdGenerator;
             String notificationMessage = trimmedText.length < 50 ? trimmedText : trimmedText.substring(0, 49) + '...';
-            _showNotificationWithDefaultSound(notificationId, notification, notificationMessage);
+            _showNotificationWithDefaultSound(notificationId, newReference.key ,notification, notificationMessage);
           }
 
           Navigator.pop(context);
@@ -264,39 +257,4 @@ class _ReminderState extends State<Reminder> {
   }
 
 }
-
-/*
-class SecondScreen extends StatefulWidget {
-  final String payload;
-  SecondScreen(this.payload);
-  @override
-  State<StatefulWidget> createState() => new SecondScreenState();
-}
-
-class SecondScreenState extends State<SecondScreen> {
-  String _payload;
-  @override
-  void initState() {
-    super.initState();
-    _payload = widget.payload;
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return new Scaffold(
-      appBar: new AppBar(
-        title: new Text("Second Screen with payload: " + _payload),
-      ),
-      body: new Center(
-        child: new RaisedButton(
-          onPressed: () {
-            Navigator.pop(context);
-          },
-          child: new Text('Go back!'),
-        ),
-      ),
-    );
-  }
-}
-*/
 

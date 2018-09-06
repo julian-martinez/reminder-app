@@ -56,6 +56,10 @@ class _ReminderListState extends State<ReminderList> {
     });
   }
 
+  ReminderData findByKey(List<ReminderData> list, String key){
+    return list.firstWhere((item) => item.id == key);
+  }
+
   void _signOut(BuildContext context) async {
     await Injector().auth.signOut();
     if (!Navigator.pop(context)){
@@ -79,13 +83,14 @@ class _ReminderListState extends State<ReminderList> {
 
   Future onSelectNotification(String payload) async {
     /*
-    showDialog(
-      context: context,
-      builder: (_) => new AlertDialog(
-        title: const Text(''),
-        content: new Text('$payload'),
-      ),
-    );
+    var reminder = findByKey(_reminderList, payload);
+    Navigator.push(context, MaterialPageRoute(
+        builder: (context) => Reminder(
+          user: widget.user,
+          reminderText: reminder.text,
+          existentNotification: reminder.notificationDate,
+        )
+    ));
     */
   }
 
