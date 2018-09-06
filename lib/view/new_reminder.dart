@@ -135,7 +135,7 @@ class _ReminderState extends State<Reminder> {
           DateTime creation = DateTime.now();
           if (notification.isBefore(creation)) notification = null;
 
-          var newReference = Injector().database.reference().child(_user.uid).child('reminders').reference().push();
+          var newReference = Injector().database.reference().child('users').child(_user.uid).child('reminders').reference().push();
           newReference.set({
             'text': trimmedText,
             'creation': creation.toString(),

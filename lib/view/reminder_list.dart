@@ -25,23 +25,17 @@ class ReminderList extends StatefulWidget {
 class _ReminderListState extends State<ReminderList> {
   FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
 
-  List<ReminderData> _reminderList;
+  List<ReminderData> _reminderList = new List();
   DatabaseReference _mainReference;
   bool _isFloatingButtonEnabled;
 
   _ReminderListState(FirebaseUser user){
-    _mainReference = Injector().database.reference().child(user.uid).child('reminders').reference();
+    _mainReference = Injector().database.reference().child('users').child(user.uid).child('reminders').reference();
     _mainReference.onChildAdded.listen(_onEntryAdded);
     //_mainReference.onChildChanged.listen(_onEntryUpdated);
   }
 
   _onEntryAdded(Event event){
-    if (_reminderList == null){
-      setState(() {
-        _reminderList = new List();
-        _isFloatingButtonEnabled = true;
-      });
-    }
     bool active = event.snapshot.value['active'];
     if (active)
     setState(() {
@@ -70,8 +64,7 @@ class _ReminderListState extends State<ReminderList> {
   @override
   void initState() {
     super.initState();
-    _isFloatingButtonEnabled = false;
-    //_reminderList = new List();
+    _isFloatingButtonEnabled = true;
 
     var initializationSettingsAndroid =
     new AndroidInitializationSettings('icon');
@@ -201,7 +194,6 @@ class _ReminderListState extends State<ReminderList> {
                           leading: Icon(Icons.delete, color: Colors.white, size: 36.0)
                       )
                   ),
-                  //secondaryBackground: new Icon(Icons.delete),
                   direction: DismissDirection.startToEnd,
                   key: new ObjectKey(reminderList[i]),
                   onDismissed: (direction) {

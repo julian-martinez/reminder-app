@@ -15,6 +15,8 @@ class Injector {
 
   static void configure(Flavor flavor){
     _flavor = flavor;
+    _database.setPersistenceEnabled(true);
+    _database.setPersistenceCacheSizeBytes(10000000);
   }
 
   factory Injector() => _singleton;
