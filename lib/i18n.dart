@@ -46,6 +46,8 @@ class I18n {
       Strings.SCHED_NOTIFICATION: 'Scheduled notification',
       Strings.RM_REMINDER: 'Reminder removed',
       Strings.LOADING_CONTENT: 'Loading content',
+      Strings.DLGT_EXIT: 'Exit',
+      Strings.DLGM_EXIT: 'Do you want to exit the application?',
 
     },
     'es': {
@@ -81,6 +83,8 @@ class I18n {
       Strings.SCHED_NOTIFICATION: 'Notificación programada',
       Strings.RM_REMINDER: 'Recordatorio eliminado',
       Strings.LOADING_CONTENT: 'Cargando contenido',
+      Strings.DLGT_EXIT: 'Salir',
+      Strings.DLGM_EXIT: '¿Quieres salir de la aplicación?',
 
     }
   };
@@ -125,6 +129,8 @@ enum Strings {
   SCHED_NOTIFICATION,
   RM_REMINDER,
   LOADING_CONTENT,
+  DLGT_EXIT,
+  DLGM_EXIT,
 }
 
 class I18nDelegate extends LocalizationsDelegate<I18n> {

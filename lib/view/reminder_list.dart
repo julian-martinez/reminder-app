@@ -89,9 +89,28 @@ class _ReminderListState extends State<ReminderList> {
     */
   }
 
+  Future<bool> _onWillPop() {
+    return showDialog(
+      context: context,
+      builder: (_) => new AlertDialog(
+        title: new Text(I18n.of(context).getValueOf(Strings.DLGT_EXIT)),
+        content: new Text(I18n.of(context).getValueOf(Strings.DLGM_EXIT)),
+        actions: <Widget>[
+          new FlatButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: new Text(I18n.of(context).getValueOf(Strings.BTN_NO)),
+          ),
+          new FlatButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            child: new Text(I18n.of(context).getValueOf(Strings.BTN_YES)),
+          ),
+        ],
+      ),
+    ) ?? false;
+  }
+
   @override
   Widget build(BuildContext context) {
-
     if (_reminderList != null){
       _reminderList.sort((a,b) {
         if (a.notificationDate != null){
@@ -104,27 +123,30 @@ class _ReminderListState extends State<ReminderList> {
       });
     }
 
-    return new Scaffold(
-      appBar: new AppBar(
-        leading: new IconButton(
-            icon: new Icon(Icons.arrow_back),
+    return new WillPopScope(
+        onWillPop: _onWillPop,
+        child: new Scaffold(
+          appBar: new AppBar(
+            leading: new IconButton(
+                icon: new Icon(Icons.arrow_back),
+                onPressed: (){
+                  _signOut(context);
+                }
+            ),
+            title: new Text(I18n.of(context).getValueOf(Strings.REMINDERS)),
+          ),
+          body: displayContent(_reminderList),
+          floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
+          floatingActionButton: _isFloatingButtonEnabled ? new FloatingActionButton(
             onPressed: (){
-              _signOut(context);
-            }
-        ),
-        title: new Text(I18n.of(context).getValueOf(Strings.REMINDERS)),
-      ),
-      body: displayContent(_reminderList),
-      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
-      floatingActionButton: _isFloatingButtonEnabled ? new FloatingActionButton(
-        onPressed: (){
-          Navigator.push(context, MaterialPageRoute(
-              builder: (context) => Reminder(user: widget.user,)
-          ));
-        },
-        child: const Icon(Icons.add),
-      )
-      : null,
+              Navigator.push(context, MaterialPageRoute(
+                  builder: (context) => Reminder(user: widget.user,)
+              ));
+            },
+            child: const Icon(Icons.add),
+          )
+              : null,
+        )
     );
   }
 
